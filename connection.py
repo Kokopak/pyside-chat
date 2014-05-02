@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import client
+import time
 from PySide import QtCore, QtGui, QtNetwork
 
 class Connexion(QtGui.QDialog):
@@ -40,30 +41,22 @@ class Connexion(QtGui.QDialog):
         #Network
         self.tcpSocket = QtNetwork.QTcpSocket(self)
         self.tcpSocket.error.connect(self.displayError)
+        self.error = False
 
         self.setWindowTitle("Connexion")
 
     def connexion(self):
         self.tcpSocket.connectToHost(self.serverInput.text(), int(self.portInput.text()))
-        c = client.Client(self.tcpSocket, self.pseudo.text())
-        self.close()
-        c.exec_()
+        #Attend jusqu'a ce que le socket soit connecté
+        if self.tcpSocket.waitForConnected(1000):
+            c = client.Client(self.tcpSocket, self.pseudo.text())
+            self.close()
+            c.exec_()
 
     def displayError(self, socketError):
-        if socketError == QtNetwork.QAbstractSocket.RemoteHostClosedError:
-            pass
-        elif socketError == QtNetwork.QAbstractSocket.HostNotFoundError:
-            QtGui.QMessageBox.information(self, "Fortune Client",
-                    "The host was not found. Please check the host name and "
-                    "port settings.")
-        elif socketError == QtNetwork.QAbstractSocket.ConnectionRefusedError:
-            QtGui.QMessageBox.information(self, "Fortune Client",
-                    "The connection was refused by the peer. Make sure the "
-                    "fortune server is running, and check that the host name "
-                    "and port settings are correct.")
-        else:
-            QtGui.QMessageBox.information(self, "Fortune Client",
-                    "The following error occurred: %s." % self.tcpSocket.errorString())
+        self.error = True
+        QtGui.QMessageBox.information(self, "Connexion",
+                "L'erreur suivant s'est produite : %s." % self.tcpSocket.errorString())
 
 
 if __name__ == "__main__":

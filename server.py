@@ -56,6 +56,11 @@ class Server(QtGui.QDialog):
             return
 
         message = instr.readString()
+        try:
+            message = str(message, encoding='ascii')
+        except TypeError:
+            pass
+
         self.sendAll(message)
         self.blockSize = 0
 

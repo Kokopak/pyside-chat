@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PySide import QtCore, QtGui, QtNetwork
+from PySide import QtCore, QtGui, QtGui, QtNetwork
 
 class Client(QtGui.QDialog):
     def __init__(self, socket, pseudo, parent=None):
