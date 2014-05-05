@@ -19,14 +19,13 @@ class Server(QtNetwork.QTcpServer):
 
     def readData(self):
         socket = self.sender()
-        print "Reçu paquet de {0} :".format(socket)
-        message = socket.readAll()
-        print message
-        self.sendAll(message)
+        print socket.bytesAvailable()
+        line = socket.readLine().data()
+        self.sendAll(line.decode("utf-8"))
 
     def sendAll(self, message):
         for c in self.clients:
-            c.write(message.toUtf8())
+            c.write(message.encode("utf-8"))
 
 if __name__ == '__main__':
 
