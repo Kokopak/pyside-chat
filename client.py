@@ -28,20 +28,21 @@ class Client(QtGui.QDialog):
         self.pseudoInput.setText("Coco")
         self.connectButton = QtGui.QPushButton("Connexion")
         self.connectButton.clicked.connect(self.connection)
+        self.connectButton.setDefault(True)
 
-        self.connectionLayout = QtGui.QGridLayout()
-        self.connectionLayout.addWidget(QtGui.QLabel("Serveur :"), 0, 0)
-        self.connectionLayout.addWidget(self.serverInput, 0, 1)
-        self.connectionLayout.addWidget(QtGui.QLabel("Port : "), 0, 2)
-        self.connectionLayout.addWidget(self.portInput, 0, 2)
-        self.connectionLayout.addWidget(QtGui.QLabel("Pseudo : "), 1, 0)
-        self.connectionLayout.addWidget(self.pseudoInput, 1, 1)
-        self.connectionLayout.addWidget(self.connectButton, 1, 2)
+        self.connectionLayout = QtGui.QHBoxLayout()
+        self.connectionLayout.addWidget(QtGui.QLabel("Serveur :"))
+        self.connectionLayout.addWidget(self.serverInput)
+        self.connectionLayout.addWidget(QtGui.QLabel("Port : "))
+        self.connectionLayout.addWidget(self.portInput)
+        self.connectionLayout.addWidget(QtGui.QLabel("Pseudo : "))
+        self.connectionLayout.addWidget(self.pseudoInput)
+        self.connectionLayout.addWidget(self.connectButton)
 
         self.mainLayout = QtGui.QVBoxLayout()
+        self.mainLayout.addLayout(self.connectionLayout)
         self.mainLayout.addWidget(self.messages)
         self.mainLayout.addLayout(self.messageLayout)
-        self.mainLayout.addLayout(self.connectionLayout)
 
         self.setLayout(self.mainLayout)
 
@@ -59,7 +60,9 @@ class Client(QtGui.QDialog):
             self.pseudo = self.pseudoInput.text()
             self.send("login %s" % self.pseudo)
             self.connectButton.setEnabled(False)
-            self.setWindowTitle("<%s>" % self.pseudo)
+            self.sendMessage.setDefault(True)
+            self.messageLineEdit.setFocus()
+            #self.setWindowTitle("<%s>" % self.pseudo)
 
     def readData(self):
         message = self.socket.readLine().data()
