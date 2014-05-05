@@ -35,7 +35,6 @@ class Client(QtGui.QDialog):
 
         self.setWindowTitle("<%s>" % self.pseudo)
 
-
     def readData(self):
         message = self.socket.readLine().data()
         self.messages.append(message.decode("utf-8"))
