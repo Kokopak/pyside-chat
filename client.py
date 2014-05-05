@@ -13,7 +13,7 @@ class Client(QtGui.QDialog):
         self.messageLineEdit = QtGui.QLineEdit()
 
         self.sendMessage = QtGui.QPushButton("Envoyer le message")
-        self.sendMessage.clicked.connect(self.send)
+        self.sendMessage.clicked.connect(self.sendClick)
 
         self.messageLayout = QtGui.QHBoxLayout()
         self.messageLayout.addWidget(QtGui.QLabel("Message : "))
@@ -31,17 +31,22 @@ class Client(QtGui.QDialog):
         self.socket.readyRead.connect(self.readData)
         self.blockSize = 0
         self.pseudo = pseudo
+        self.send("<em>Connexion de %s</em>" % self.pseudo)
 
         self.setWindowTitle("<%s>" % self.pseudo)
+
 
     def readData(self):
         message = self.socket.readLine().data()
         self.messages.append(message.decode("utf-8"))
 
-
-    def send(self, message=None):
-        message = "<%s> : %s " % (self.pseudo, self.messageLineEdit.text())
+    def send(self, message):
         self.socket.write(message.encode("utf-8"))
+
+    def sendClick(self):
+        message = "<%s> : %s " % (self.pseudo, self.messageLineEdit.text())
+        #self.socket.write(message.encode("utf-8"))
+        self.send(message)
         self.messageLineEdit.clear()
         self.messageLineEdit.setFocus()
 

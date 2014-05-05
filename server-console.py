@@ -15,11 +15,10 @@ class Server(QtNetwork.QTcpServer):
         client = self.nextPendingConnection()
         client.readyRead.connect(self.readData)
         self.clients.append(client)
-        self.sendAll("<em>Nouveau client !</em>")
+        #self.sendAll("<em>Nouveau client !</em>")
 
     def readData(self):
         socket = self.sender()
-        print socket.bytesAvailable()
         line = socket.readLine().data()
         self.sendAll(line.decode("utf-8"))
 
