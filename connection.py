@@ -13,8 +13,11 @@ class Connexion(QtGui.QDialog):
         portLabel = QtGui.QLabel("Port : ")
 
         self.serverInput = QtGui.QLineEdit()
+        self.serverInput.setText("localhost")
         self.portInput = QtGui.QLineEdit()
+        self.portInput.setText("8080")
         self.pseudo = QtGui.QLineEdit()
+        self.pseudo.setText("Coco")
 
         quitButton = QtGui.QPushButton("Quitter")
         quitButton.setAutoDefault(False)

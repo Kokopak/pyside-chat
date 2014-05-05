@@ -15,7 +15,7 @@ class Server(QtNetwork.QTcpServer):
         client = self.nextPendingConnection()
         client.readyRead.connect(self.readData)
         self.clients.append(client)
-        print "Connexion de %s" % client
+        self.sendAll("<em>Nouveau client !</em>")
 
     def readData(self):
         socket = self.sender()

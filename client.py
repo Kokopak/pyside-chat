@@ -32,8 +32,6 @@ class Client(QtGui.QDialog):
         self.blockSize = 0
         self.pseudo = pseudo
 
-        self.send("<em>Connexion de %s</em>" % self.pseudo)
-
         self.setWindowTitle("<%s>" % self.pseudo)
 
     def readData(self):
@@ -43,9 +41,7 @@ class Client(QtGui.QDialog):
 
     def send(self, message=None):
         message = "<%s> : %s " % (self.pseudo, self.messageLineEdit.text())
-
         self.socket.write(message.encode("utf-8"))
-
         self.messageLineEdit.clear()
         self.messageLineEdit.setFocus()
 
