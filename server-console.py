@@ -9,14 +9,21 @@ class Server(QtNetwork.QTcpServer):
     def __init__(self, parent=None):
         super(Server, self).__init__(parent)
         self.newConnection.connect(self.newClient)
+
         self.clients = []
 
     def newClient(self):
         client = self.nextPendingConnection()
         client.readyRead.connect(self.readData)
+        client.disconnected.connect(self.disconnectClient)
         self.clients.append(client)
+        print "Y'a dun nouveau"
+
+    def disconnectClient(self):
+        self.sendAll(u"<em>Déconnexion d'un client</em>")
 
     def readData(self):
+        print "Recu !!!"
         socket = self.sender()
         line = socket.readLine().data()
         self.sendAll(line.decode("utf-8"))
