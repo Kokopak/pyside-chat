@@ -10,23 +10,29 @@ class Server(QtNetwork.QTcpServer):
         super(Server, self).__init__(parent)
         self.newConnection.connect(self.newClient)
 
-        self.clients = []
+        self.clients = {}
 
     def newClient(self):
         client = self.nextPendingConnection()
         client.readyRead.connect(self.readData)
         client.disconnected.connect(self.disconnectClient)
-        self.clients.append(client)
-        print "Y'a dun nouveau"
+        self.clients[client] = {}
 
     def disconnectClient(self):
-        self.sendAll(u"<em>Déconnexion d'un client</em>")
+        socket = self.sender()
+        self.sendAll(u"<em>Déconnexion de %s</em>" % self.clients[socket]["pseudo"])
+        self.clients.pop(socket)
 
     def readData(self):
-        print "Recu !!!"
         socket = self.sender()
         line = socket.readLine().data()
-        self.sendAll(line.decode("utf-8"))
+        cmd, value = line.split(" ", 1)
+        if cmd == "login":
+            self.sendAll(u"<em>Connexion de %s</em>" % value.decode("utf-8"))
+            self.clients[socket]["pseudo"] = value.decode("utf-8")
+        elif cmd == "say":
+            message = "<%s> : %s" % (self.clients[socket]["pseudo"], value.decode("utf-8"))
+            self.sendAll(message)
 
     def sendAll(self, message):
         for c in self.clients:

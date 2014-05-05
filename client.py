@@ -57,7 +57,7 @@ class Client(QtGui.QDialog):
         self.socket.connectToHost(self.serverInput.text(), int(self.portInput.text()))
         if self.socket.waitForConnected(1000):
             self.pseudo = self.pseudoInput.text()
-            self.send("<em>Connexion de %s</em>" % self.pseudo)
+            self.send("login %s" % self.pseudo)
             self.connectButton.setEnabled(False)
             self.setWindowTitle("<%s>" % self.pseudo)
 
@@ -69,8 +69,7 @@ class Client(QtGui.QDialog):
         self.socket.write(message.encode("utf-8"))
 
     def sendClick(self):
-        message = "<%s> : %s " % (self.pseudo, self.messageLineEdit.text())
-        print type(message)
+        message = "say %s" % (self.messageLineEdit.text())
         self.send(message)
         self.messageLineEdit.clear()
         self.messageLineEdit.setFocus()
