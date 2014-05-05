@@ -2,7 +2,6 @@
 #-*-coding: utf-8-*-
 
 import random
-
 from PySide import QtCore, QtNetwork
 
 class Server(QtNetwork.QTcpServer):
@@ -17,6 +16,7 @@ class Server(QtNetwork.QTcpServer):
         client.readyRead.connect(self.readData)
         client.disconnected.connect(self.disconnectClient)
         self.clients[client] = {}
+        self.clients[client]["pseudo"] = u"guest-%d" % random.randint(1, 1000)
 
     def disconnectClient(self):
         socket = self.sender()
@@ -27,16 +27,27 @@ class Server(QtNetwork.QTcpServer):
         socket = self.sender()
         line = socket.readLine().data()
         cmd, value = line.split(" ", 1)
+        value = value.decode("utf-8")
         if cmd == "login":
-            self.sendAll(u"<em>Connexion de %s</em>" % value.decode("utf-8"))
-            self.clients[socket]["pseudo"] = value.decode("utf-8")
+            if self.pseudoExist(value):
+                pseudo = self.clients[socket]["pseudo"]
+                socket.write(u"<em>Pseudo déja pris. Assignement automatique...</em>".encode("utf-8"))
+            else:
+                pseudo = value
+                self.clients[socket]["pseudo"] = pseudo
+            self.sendAll(u"<em>Connexion de %s</em>" % pseudo)
         elif cmd == "say":
-            message = "<%s> : %s" % (self.clients[socket]["pseudo"], value.decode("utf-8"))
+            message = "<%s> : %s" % (self.clients[socket]["pseudo"], value)
             self.sendAll(message)
 
     def sendAll(self, message):
         for c in self.clients:
             c.write(message.encode("utf-8"))
+
+    def pseudoExist(self, pseudo):
+        for c in self.clients:
+            if pseudo == self.clients[c]["pseudo"]:
+                return True
 
 if __name__ == '__main__':
 
