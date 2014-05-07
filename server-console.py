@@ -2,7 +2,7 @@
 #-*-coding: utf-8-*-
 
 import random
-from PySide import QtCore, QtNetwork
+from PyQt5 import QtCore, QtNetwork
 
 class Server(QtNetwork.QTcpServer):
     def __init__(self, parent=None):
