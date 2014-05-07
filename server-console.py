@@ -20,29 +20,31 @@ class Server(QtNetwork.QTcpServer):
 
     def disconnectClient(self):
         socket = self.sender()
-        self.sendAll(u"<em>Déconnexion de %s</em>" % self.clients[socket]["pseudo"])
+        self.sendAll("<em>Déconnexion de %s</em>" % self.clients[socket]["pseudo"])
         self.clients.pop(socket)
 
     def readData(self):
         socket = self.sender()
-        line = socket.readLine().data()
+        line = socket.readLine().data().decode("utf-8")
         cmd, value = line.split(" ", 1)
-        value = value.decode("utf-8")
         if cmd == "login":
             if self.pseudoExist(value):
                 pseudo = self.clients[socket]["pseudo"]
-                socket.write(u"<em>Pseudo déja pris. Assignement automatique...</em>".encode("utf-8"))
+                self.send(socket, "<em>Pseudo déja pris. Assignement automatique...</em>")
             else:
                 pseudo = value
                 self.clients[socket]["pseudo"] = pseudo
-            self.sendAll(u"<em>Connexion de %s</em>" % pseudo)
+            self.sendAll("<em>Connexion de %s</em>" % pseudo)
         elif cmd == "say":
             message = "<%s> : %s" % (self.clients[socket]["pseudo"], value)
             self.sendAll(message)
 
+    def send(self, socket, message):
+        socket.write(message.encode("utf-8"))
+
     def sendAll(self, message):
         for c in self.clients:
-            c.write(message.encode("utf-8"))
+            self.send(c, message)
 
     def pseudoExist(self, pseudo):
         for c in self.clients:
@@ -56,5 +58,5 @@ if __name__ == '__main__':
     serv = Server()
     port = 8080
     serv.listen(port=port)
-    print "Le serveur tourne sur le port %d" % port
+    print("Le serveur tourne sur le port %d" % port)
     sys.exit(app.exec_())
