@@ -53,7 +53,8 @@ class Server(QtNetwork.QTcpServer):
 
 if __name__ == '__main__':
 
-    import sys
+    import sys, signal
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     app = QtCore.QCoreApplication(sys.argv)
     serv = Server()
     port = 8080
